@@ -1,8 +1,7 @@
 @Library('my-shared-library') _
 
 pipeline {
-    agent {
-        any
+    agent any
         tools {
             maven 'Maven_3.8.6'
         }
