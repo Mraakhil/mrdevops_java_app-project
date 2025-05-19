@@ -1,59 +1,54 @@
 @Library('my-shared-library') _
-tools {
-    maven 'Maven_3.8.6'
-}
 
+pipeline {
+    agent {
+        any
+        tools {
+            maven 'Maven_3.8.6'
+        }
+    }
 
-pipeline{
-
-    agent any
-     parameters{
-
+    parameters {
         choice(name: 'action', choices: 'create\ndelete', description: 'Choose create/Destroy')
-        
     }
-    stages{
-         
-        stage('Git Checkout'){
-                    when { expression {  params.action == 'create' } }
 
-            steps{
-                 script{
-                     gitCheckout(
-                     branch: "main",
-                     url: "https://github.com/imranmycloud/mrdevops_java_app-project.git"
-             )
-             
+    stages {
+        stage('Git Checkout') {
+            when { expression { params.action == 'create' } }
+            steps {
+                script {
+                    gitCheckout(
+                        branch: "main",
+                        url: "https://github.com/imranmycloud/mrdevops_java_app-project.git"
+                    )
                 }
             }
         }
-        stage('Unit Test maven'){
-    when { expression { params.action == 'create' } }
-    steps {
-        withMaven(maven: 'Maven_3.8.6') {
-            sh 'mvn test'
-        }
-    }
-}
 
-        stage('Integration Test maven'){
-            when { expression {  params.action == 'create' } }
-
-            steps{
-                 script{
-                   mvnIntegrationTest()
-             
+        stage('Unit Test maven') {
+            when { expression { params.action == 'create' } }
+            steps {
+                script {
+                    mvnTest()
                 }
             }
         }
-        stage('Static code analysis: Sonarqube'){
-            when { expression {  params.action == 'create' } }
 
-         steps{
-                 script{
+        stage('Integration Test maven') {
+            when { expression { params.action == 'create' } }
+            steps {
+                script {
+                    mvnIntegrationTest()
+                }
+            }
+        }
+
+        stage('Static code analysis: Sonarqube') {
+            when { expression { params.action == 'create' } }
+            steps {
+                script {
                     def SonarQubecredentialsId = 'sonarqube-api'
-                   statiCodeAnalysis(SonarQubecredentialsId)
-             
+                    statiCodeAnalysis(SonarQubecredentialsId)
                 }
             }
         }
