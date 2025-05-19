@@ -1,4 +1,8 @@
 @Library('my-shared-library') _
+tools {
+    maven 'Maven_3.8.6'
+}
+
 
 pipeline{
 
