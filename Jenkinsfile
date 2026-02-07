@@ -3,7 +3,9 @@
 pipeline{
 
     agent any
-
+    tools {
+        jdk'jdk8'
+    }
     parameters{
 
         choice(name: 'action', choices: 'create\ndelete', description: 'Choose create/Destroy')
