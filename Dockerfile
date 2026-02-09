@@ -1,5 +1,5 @@
 # Use a modern Java 17 image (matching your pom.xml)
-FROM eclipse-temurin:17-jre-jammy
+FROM eclipse-temurin:8-jdk-alpine
 
 # Create the working directory
 WORKDIR /app
