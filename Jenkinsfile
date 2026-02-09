@@ -95,14 +95,13 @@ pipeline{
                }
             }
         }
-        stage('Docker Image Push : DockerHub '){
-         when { expression {  params.action == 'create' } }
-            steps{
-               script{
-                   
-                   dockerImagePush("${params.ImageName}","${params.ImageTag}","${params.DockerHubUser}")
-               }
+        stage('Push Image to AWS ECR') {
+           steps {
+              script {
+            // This calls the function above with your specific repo info
+                      dockerPush("925149286832", "ap-south-1", "project-ecr")
+                }
             }
-        } 
+        }
     }
 }
