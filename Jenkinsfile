@@ -23,7 +23,7 @@ pipeline{
                     when { expression {  params.action == 'create' } }
             steps{
             gitCheckout(
-                branch: "main",
+                branch: "dev",
                 url: "https://github.com/Mraakhil/mrdevops_java_app-project.git"
             )
             }
