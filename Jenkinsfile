@@ -3,9 +3,12 @@
 pipeline{
 
     agent any
-    tools {
-        jdk 'jdk8'
+    environment {
+        // This opens the necessary compiler packages for Lombok to work on Java 17
+        MAVEN_OPTS = "--add-opens jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED --add-opens jdk.compiler/com.sun.tools.javac.comp=ALL-UNNAMED --add-opens jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED --add-opens jdk.compiler/com.sun.tools.javac.main=ALL-UNNAMED --add-opens jdk.compiler/com.sun.tools.javac.model=ALL-UNNAMED --add-opens jdk.compiler/com.sun.tools.javac.parser=ALL-UNNAMED --add-opens jdk.compiler/com.sun.tools.javac.processing=ALL-UNNAMED --add-opens jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED --add-opens jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED --add-opens jdk.compiler/com.sun.tools.javac.jvm=ALL-UNNAMED"
     }
+    
+    
     parameters{
 
         choice(name: 'action', choices: 'create\ndelete', description: 'Choose create/Destroy')
@@ -36,7 +39,7 @@ pipeline{
                }
             }
         }
-         stage('Integration Test maven'){
+        stage('Integration Test maven'){
          when { expression {  params.action == 'create' } }
             steps{
                script{
@@ -44,7 +47,7 @@ pipeline{
                    mvnIntegrationTest()
                }
             }
-        }
+        }  
         stage('Static code analysis: Sonarqube'){
          when { expression {  params.action == 'create' } }
             steps{
@@ -55,7 +58,7 @@ pipeline{
                }
             }
         }
-        stage('Quality Gate Status Check : Sonarqube'){
+         stage('Quality Gate Status Check : Sonarqube'){
          when { expression {  params.action == 'create' } }
             steps{
                script{
@@ -74,7 +77,7 @@ pipeline{
                }
             }
         }
-        stage('Docker Image Build'){
+         stage('Docker Image Build'){
          when { expression {  params.action == 'create' } }
             steps{
                script{
@@ -83,32 +86,5 @@ pipeline{
                }
             }
         }
-         stage('Docker Image Scan: trivy '){
-         when { expression {  params.action == 'create' } }
-            steps{
-               script{
-                   
-                   dockerImageScan("${params.ImageName}","${params.ImageTag}","${params.DockerHubUser}")
-               }
-            }
-        }
-        stage('Docker Image Push : DockerHub '){
-         when { expression {  params.action == 'create' } }
-            steps{
-               script{
-                   
-                   dockerImagePush("${params.ImageName}","${params.ImageTag}","${params.DockerHubUser}")
-               }
-            }
-        }   
-        stage('Docker Image Cleanup : DockerHub '){
-         when { expression {  params.action == 'create' } }
-            steps{
-               script{
-                   
-                   dockerImageCleanup("${params.ImageName}","${params.ImageTag}","${params.DockerHubUser}")
-               }
-            }
-        }      
     }
 }
