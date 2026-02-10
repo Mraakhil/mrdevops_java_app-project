@@ -1,4 +1,4 @@
-@Library('jenkins_shared_lib') _
+@Library('jenkins_shared_lib','jenkins_shared_lib') _
 
 pipeline{
 
@@ -99,7 +99,7 @@ pipeline{
            steps {
               script {
             // Updated function name to match your file 'vars/dockerImagePush.groovy'
-                      dockerImagePush("925149286832", "ap-south-1", "project-ecr")
+                      dockerImagePushpush("925149286832", "ap-south-1", "project-ecr")
                 }
             }
         }
