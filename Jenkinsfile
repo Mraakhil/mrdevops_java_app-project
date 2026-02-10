@@ -98,8 +98,8 @@ pipeline{
         stage('Push Image to AWS ECR') {
            steps {
               script {
-            // This calls the function above with your specific repo info
-                      dockerPush("925149286832", "ap-south-1", "project-ecr")
+            // Updated function name to match your file 'vars/dockerImagePush.groovy'
+                      dockerImagePush("925149286832", "ap-south-1", "project-ecr")
                 }
             }
         }
