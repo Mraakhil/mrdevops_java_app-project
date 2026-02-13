@@ -77,15 +77,14 @@ pipeline{
                }
             }
         }
-        stage('Docker Image Build'){
-         when { expression {  params.action == 'create' } }
-            steps{
-               script{
-                   
-                   dockerBuild("${params.ImageName}","${params.ImageTag}","${params.DockerHubUser}")
+          stage('Push Image to AWS ECR') {
+        steps {
+           script {
+               sh "aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 925149286832.dkr.ecr.ap-south-1.amazonaws.com"
+               sh "docker build -t project-ecr ."
+                  }
                }
-            }
-        }
+           }
          stage('Docker Image Scan: trivy '){
          when { expression {  params.action == 'create' } }
             steps{
@@ -95,15 +94,15 @@ pipeline{
                }
             }
         }
-        stage('Push Image to AWS ECR') {
-    steps {
-        script {
-            sh """
-                docker push 925149286832.dkr.ecr.ap-south-1.amazonaws.com/project-ecr:latest
-            """
+           stage('Push Image to AWS ECR') {
+       steps {
+           script {
+              sh """
+                   docker push 925149286832.dkr.ecr.ap-south-1.amazonaws.com/project-ecr:latest
+                """
+                }
+            }
         }
-    }
-}
 
     }
 }
