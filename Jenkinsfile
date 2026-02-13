@@ -78,13 +78,14 @@ pipeline{
             }
         }
           stage('Push Image to AWS ECR') {
-        steps {
-           script {
-               sh "aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 925149286832.dkr.ecr.ap-south-1.amazonaws.com"
-               sh "docker build -t project-ecr ."
+              when { expression {  params.action == 'create' } }
+               steps {
+                 script {
+                    sh "aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 925149286832.dkr.ecr.ap-south-1.amazonaws.com"
+                    sh "docker build -t project-ecr ."
+                     }
                   }
                }
-           }
          stage('Docker Image Scan: trivy '){
          when { expression {  params.action == 'create' } }
             steps{
