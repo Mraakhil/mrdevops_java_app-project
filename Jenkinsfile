@@ -77,7 +77,7 @@ pipeline{
                }
             }
         }
-          stage('Push Image to AWS ECR') {
+          stage('Push image build') {
               when { expression {  params.action == 'create' } }
                steps {
                  script {
