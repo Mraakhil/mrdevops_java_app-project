@@ -23,7 +23,7 @@ pipeline{
                     when { expression {  params.action == 'create' } }
             steps{
             gitCheckout(
-                branch: "dev",
+                branch: "main",
                 url: "https://github.com/Mraakhil/mrdevops_java_app-project.git"
             )
             }
@@ -77,7 +77,7 @@ pipeline{
                }
             }
         }
-         stage('Docker Image Build'){
+        stage('Docker Image Build'){
          when { expression {  params.action == 'create' } }
             steps{
                script{
@@ -86,5 +86,24 @@ pipeline{
                }
             }
         }
+         stage('Docker Image Scan: trivy '){
+         when { expression {  params.action == 'create' } }
+            steps{
+               script{
+                   
+                   dockerImageScan("${params.ImageName}","${params.ImageTag}","${params.DockerHubUser}")
+               }
+            }
+        }
+        stage('Push Image to AWS ECR') {
+    steps {
+        script {
+            sh """
+                docker push 925149286832.dkr.ecr.ap-south-1.amazonaws.com/project-ecr:latest
+            """
+        }
+    }
+}
+
     }
 }
