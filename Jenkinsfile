@@ -77,15 +77,21 @@ pipeline{
                }
             }
         }
-          stage('Push image build') {
-              when { expression {  params.action == 'create' } }
-               steps {
-                 script {
-                    sh "aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 925149286832.dkr.ecr.ap-south-1.amazonaws.com"
-                    sh "docker build -t project-ecr ."
-                     }
-                  }
-               }
+         stage('Push image build') {
+    when { expression { params.action == 'create' } }
+    steps {
+        script {
+            // 1. Login
+            sh "aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 925149286832.dkr.ecr.ap-south-1.amazonaws.com"
+            
+            // 2. Build
+            sh "docker build -t project-ecr ."
+            
+            // 3. Tag (Added)
+            sh "docker tag project-ecr:latest 925149286832.dkr.ecr.ap-south-1.amazonaws.com/project-ecr:latest"
+        }
+    }
+}
          stage('Docker Image Scan: trivy '){
          when { expression {  params.action == 'create' } }
             steps{
